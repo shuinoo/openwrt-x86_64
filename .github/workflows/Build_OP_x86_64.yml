@@ -8,8 +8,10 @@
 name: Build_x86_64
 
 on: 
-  release:
-    types: [published]
+  repository_dispatch:
+  workflow_dispatch:
+#  release:
+#    types: [published]
 
   #push:
   #  branches: 
@@ -59,12 +61,15 @@ jobs:
 
     - name: Clone source code
       env: 
-        REPO_URL: https://github.com/coolsnowwolf/lede
-        REPO_BRANCH: master
+#        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_URL: https://github.com/openwrt/openwrt.git
+        REPO_BRANCH: openwrt-18.06
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
-        sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+        echo -e "src-git kenzo https://github.com/kenzok8/openwrt-packages\nsrc-git small https://github.com/kenzok8/small" >> feeds.conf.default
+        cd package
+        git clone https://github.com/destan19/OpenAppFilter.git
         
     - name: Update & Install feeds
       working-directory: ./openwrt
